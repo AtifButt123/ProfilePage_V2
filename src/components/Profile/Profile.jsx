@@ -29,9 +29,6 @@ export default function Profile(props) {
     }
   };
 
-  
-
-
   return (
     <div className="card p-3 profile-container">
       <img

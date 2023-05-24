@@ -16,6 +16,7 @@ function ProfilePage() {
   const [isHovering, setIsHovering] = useState(false);
   const [friendList, setFriendList] = useState([]);
   const [selectedPerson, setSelectedPerson] = useState(null);
+  const [currentUserPublicKey, setCurrentUserPublicKey] = useState("");
 
   const quicks = [
     { title: "Groups", list: ["Group 1", "Group 2", "Group 3"] },
@@ -45,14 +46,60 @@ function ProfilePage() {
     fetchFriends();
   }, [selectedPerson]);
 
+  useEffect(() => {
+    // Fetch the current user's public key from the backend
+    const fetchCurrentUser = async () => {
+      try {
+        const response = await axios.get(`http://localhost:5000/persons/1/`);
+        setCurrentUserPublicKey(response.data.publicKey);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchCurrentUser();
+  }, []);
+
+  useEffect(() => {
+    const fetchCurrentPerson = async () => {
+      try {
+        if (currentUserPublicKey) {
+          const response = await axios.get(`http://localhost:5000/persons/${currentUserPublicKey}`);
+          setSelectedPerson(response.data);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchCurrentPerson();
+  }, [currentUserPublicKey]);
+
   const handlePersonClick = async (personId) => {
     try {
       const response = await axios.get(`http://localhost:5000/persons/${personId}`);
-      setSelectedPerson(response.data);
+      const selectedPerson = response.data;
+  
+      // Check if the selected person is already a friend
+      const isFriend = friendList.includes(personId);
+      if (isFriend) {
+        window.alert("You are already friends with this person.");
+      }
+  
+      // Checking if a friend is already in friend request list
+      const response2 = await axios.get(`http://localhost:5000/persons/${currentUserPublicKey}/friendRequests`);
+      const friendRequests = response2.data.friendRequests;
+      const isRequestSent = friendRequests.includes(personId);
+      if (isRequestSent) {
+        window.alert("You have already sent a friend request to this person.");
+      }
+  
+      setSelectedPerson(selectedPerson);
     } catch (error) {
       console.error(error);
     }
   };
+  
 
   return (
     <div>

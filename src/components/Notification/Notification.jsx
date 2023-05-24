@@ -1,56 +1,61 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import './Notification.css';
 
-export default function Notification() {
-  const [notifications, setNotifications] = useState([]);
+const Notification = ({ currentUserPublicKey }) => {
+  const [friendRequests, setFriendRequests] = useState([]);
 
   useEffect(() => {
-    fetchNotifications();
-  }, []);
+    // Fetch friend requests for the current user from the backend API
+    const fetchFriendRequests = async () => {
+      try {
+        const response = await fetch(`http://localhost:5000/persons/${currentUserPublicKey}/friendRequests`);
+        const data = await response.json();
+        setFriendRequests(data.friendRequests);
+      } catch (error) {
+        console.error(error);
+      }
+    };
 
-  const fetchNotifications = async () => {
-    try {
-      const res = await axios.get('http://localhost:5000/notifications');
-      setNotifications(res.data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
+    fetchFriendRequests();
+  }, [currentUserPublicKey]);
 
-  const handleAcceptFriendRequest = async (notificationId, friendId) => {
+  const handleAcceptRequest = async (friendPublicKey) => {
     try {
-      await axios.post(`http://localhost:5000/persons/${friendId}/friends`, { friendId });
-      await axios.delete(`http://localhost:5000/notifications/${notificationId}`);
-      fetchNotifications();
-    } catch (error) {
-      console.error(error);
-    }
-  };
+      const response = await axios.post(`http://localhost:5000/persons/${currentUserPublicKey}/acceptFriendRequest`, {
+        publicKey: friendPublicKey
+      });
 
-  const handleRejectFriendRequest = async (notificationId) => {
-    try {
-      await axios.delete(`http://localhost:5000/notifications/${notificationId}`);
-      fetchNotifications();
+      if (response.data.message === 'Friend request accepted successfully') {
+        window.alert('Friend request accepted successfully');
+        setFriendRequests((prevRequests) => prevRequests.filter((request) => request !== friendPublicKey));
+      }
     } catch (error) {
       console.error(error);
     }
   };
 
   return (
-    <div>
-      <h2>Notifications</h2>
-      {notifications.length === 0 && <p>No new notifications</p>}
-      {notifications.map((notification) => (
-        <div key={notification._id}>
-          <p>
-            Friend request from {notification.sender.name}
-          </p>
-          <button onClick={() => handleAcceptFriendRequest(notification._id, notification.sender._id)}>Accept</button>
-          <button onClick={() => handleRejectFriendRequest(notification._id)}>Reject</button>
-        </div>
-      ))}
+    <div className="container">
+      <h3 className="mt-3">Friend Requests</h3>
+      {friendRequests.length === 0 ? (
+        <p>No pending friend requests</p>
+      ) : (
+        <ul className="list-group mt-3">
+          {friendRequests.map((friendPublicKey) => (
+            <li className="list-group-item d-flex justify-content-between align-items-center" key={friendPublicKey}>
+              Friend Request from: {friendPublicKey}
+              <button
+                className="btn btn-primary"
+                onClick={() => handleAcceptRequest(friendPublicKey)}
+              >
+                Accept
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
-}
+};
 
+export default Notification;
