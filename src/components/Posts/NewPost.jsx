@@ -148,9 +148,3 @@ export default function NewPost(props) {
         </div>
     );
 }
-
-
-
-
-
-

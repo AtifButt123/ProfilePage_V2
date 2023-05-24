@@ -41,10 +41,11 @@ router.get('/search', async (req, res) => {
 
 // Add a new person to the db
 router.post('/add', (req, res) => {
-  const { name, age, publicKey } = req.body;
+  const { name, nickName, age, publicKey } = req.body;
 
   const newPerson = new Person({
     name,
+    nickName,
     age: Number(age),
     publicKey,
   });
@@ -179,5 +180,24 @@ router.get('/:publicKey/friendRequests', async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 });
+
+router.get('/:publicKey/friendCount', async (req, res) => {
+  try {
+    const { publicKey } = req.params;
+    const person = await Person.findOne({ publicKey });
+
+    if (!person) {
+      return res.status(404).json({ message: 'Person not found' });
+    }
+
+    const friendCount = person.friends.length;
+
+    res.json({ friendCount });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
 
 module.exports = router;

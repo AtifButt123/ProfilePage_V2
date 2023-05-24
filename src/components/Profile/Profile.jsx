@@ -70,9 +70,6 @@ export default function Profile(props) {
               <strong>Earned:</strong> {props.money}
             </li>
             <li className="list-group-item">
-              <strong>Following:</strong> {props.followCount}
-            </li>
-            <li className="list-group-item">
               <strong>Followers:</strong> {props.followerCount}
             </li>
           </ul>

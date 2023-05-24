@@ -5,7 +5,14 @@ const personSchema = new Schema({
   name: {
     type: String,
     required: true,
-    unique: true,
+    unique: false,
+    trim: true,
+    minlength: 3,
+  },
+  nickName: {
+    type: String,
+    required: true,
+    unique: false,
     trim: true,
     minlength: 3,
   },

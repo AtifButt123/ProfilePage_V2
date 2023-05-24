@@ -13,6 +13,7 @@ function App() {
        <Route path = "/profile" element = {<ProfilePage/>} />
         <Route path="/notifications" element={<Notification currentUserPublicKey={1}/>} />
       </Routes>
+
     </Router>
   );
 }
