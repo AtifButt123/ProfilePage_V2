@@ -26,7 +26,7 @@ const personSchema = new Schema({
     unique: true,
     trim: true,
   },
-  friends: [{ type: String }], // stores the publicKey addresses of the Person's friends
+  friends: [{ type: String }],
   friendRequests: [{ type: String }],
 }, {
   timestamps: true,

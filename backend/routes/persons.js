@@ -38,7 +38,6 @@ router.get('/search', async (req, res) => {
 });
 
 
-
 // Add a new person to the db
 router.post('/add', (req, res) => {
   const { name, nickName, age, publicKey } = req.body;
