@@ -69,8 +69,6 @@ export default function NewPost(props) {
                         />
                     </button>
 
-
-
                 </div>
                 <hr className="divider" />
                 {showForm && (

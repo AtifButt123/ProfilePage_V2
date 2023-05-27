@@ -26,8 +26,8 @@ const personSchema = new Schema({
     unique: true,
     trim: true,
   },
-  friends: [{ type: String }],
-  friendRequests: [{ type: String }],
+  friends: [{ type: mongoose.Types.ObjectId }],
+  friendRequests: [{ type: mongoose.Types.ObjectId }],
 }, {
   timestamps: true,
 });
